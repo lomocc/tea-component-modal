@@ -1,6 +1,6 @@
 import hoistNonReactStatic from 'hoist-non-react-statics';
 import React, { ComponentClass } from 'react';
-import { ModalConsumer } from './ModalContext';
+import { ModalConsumer } from './context';
 
 /**
  * 为自组件注入 closeModal 方法

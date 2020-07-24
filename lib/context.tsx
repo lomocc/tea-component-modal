@@ -5,9 +5,14 @@ import {
 } from '@tencent/tea-component';
 import React, { Component, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import { ModalContextProps, ModalProps } from './interfaces';
-import Modal from './Modal';
-import { ModalProvider } from './ModalContext';
+import Flag from './Flag';
+import { ModalComponentProps, ModalProps } from './interfaces';
+
+const ModalContext = React.createContext<Pick<
+  ModalComponentProps,
+  'close'
+> | null>(null);
+const { Consumer: ModalConsumer, Provider } = ModalContext;
 
 interface ItemButtonProps extends Omit<ButtonProps, 'onClick'> {
   onClick: (flag: number) => void;
@@ -24,7 +29,7 @@ class ItemButton extends Component<ItemButtonProps> {
   }
 }
 
-export interface ItemRendererProps extends ModalProps {
+export interface Props extends ModalProps {
   /**
    * 关闭弹窗的回调
    */
@@ -44,19 +49,16 @@ interface State {
    * 正在点击加载的按钮 flag
    */
   loadingFlag: number;
-  readonly componentProps: ModalContextProps;
+  readonly modalComponentProps: ModalComponentProps;
 }
 
 /**
- * 全局 Modal 弹框，需要和 ModalContext 搭配使用
+ * 弹框 Provider
  */
-export default class ModalItemRenderer extends PureComponent<
-  ItemRendererProps,
-  State
-> {
+class ModalProvider extends PureComponent<Props, State> {
   static defaultProps = {
     root: document.body,
-    flags: Modal.OK,
+    flags: Flag.OK,
     yesLabel: '是',
     noLabel: '否',
     okLabel: '确定',
@@ -68,8 +70,8 @@ export default class ModalItemRenderer extends PureComponent<
     this.state = {
       flag: null,
       visible: false, // 默认打开
-      loadingFlag: Modal.NONE,
-      componentProps: {
+      loadingFlag: Flag.NONE,
+      modalComponentProps: {
         close: this.close,
       },
     };
@@ -94,14 +96,14 @@ export default class ModalItemRenderer extends PureComponent<
       this.setState({
         visible: false,
         flag,
-        loadingFlag: Modal.NONE,
+        loadingFlag: Flag.NONE,
       });
     } else {
-      this.setState({ loadingFlag: Modal.NONE });
+      this.setState({ loadingFlag: Flag.NONE });
     }
   };
   private onClose = async () => {
-    await this.onFlag(Modal.CLOSE);
+    await this.onFlag(Flag.CLOSE);
   };
   /**
    * 弹窗关闭（动画完成）
@@ -114,7 +116,7 @@ export default class ModalItemRenderer extends PureComponent<
   /**
    * 关闭弹窗
    */
-  close = async (flag: number = Modal.CANCEL) => {
+  close = async (flag: number = Flag.CANCEL) => {
     await this.onFlag(flag);
   };
   componentDidMount() {
@@ -128,7 +130,7 @@ export default class ModalItemRenderer extends PureComponent<
     root!.removeChild(this.container);
   }
   render() {
-    const { visible, loadingFlag, componentProps } = this.state;
+    const { visible, loadingFlag, modalComponentProps } = this.state;
 
     const {
       root,
@@ -153,46 +155,46 @@ export default class ModalItemRenderer extends PureComponent<
     } = this.props;
 
     const buttons = [
-      !!(flags! & Modal.OK) && (
+      !!(flags! & Flag.OK) && (
         <ItemButton
-          key={`${Modal.OK}`}
-          flag={Modal.OK}
+          key={`${Flag.OK}`}
+          flag={Flag.OK}
           onClick={this.onFlag}
           type="primary"
-          loading={Boolean(loadingFlag & Modal.OK)}
+          loading={Boolean(loadingFlag & Flag.OK)}
           {...okProps}
         >
           {okLabel}
         </ItemButton>
       ),
-      !!(flags! & Modal.CANCEL) && (
+      !!(flags! & Flag.CANCEL) && (
         <ItemButton
-          key={`${Modal.CANCEL}`}
-          flag={Modal.CANCEL}
+          key={`${Flag.CANCEL}`}
+          flag={Flag.CANCEL}
           onClick={this.onFlag}
-          loading={Boolean(loadingFlag & Modal.CANCEL)}
+          loading={Boolean(loadingFlag & Flag.CANCEL)}
           {...cancelProps}
         >
           {cancelLabel}
         </ItemButton>
       ),
-      !!(flags! & Modal.YES) && (
+      !!(flags! & Flag.YES) && (
         <ItemButton
-          key={`${Modal.YES}`}
-          flag={Modal.YES}
+          key={`${Flag.YES}`}
+          flag={Flag.YES}
           onClick={this.onFlag}
-          loading={Boolean(loadingFlag & Modal.YES)}
+          loading={Boolean(loadingFlag & Flag.YES)}
           {...yesProps}
         >
           {yesLabel}
         </ItemButton>
       ),
-      !!(flags! & Modal.NO) && (
+      !!(flags! & Flag.NO) && (
         <ItemButton
-          key={`${Modal.NO}`}
-          flag={Modal.NO}
+          key={`${Flag.NO}`}
+          flag={Flag.NO}
           onClick={this.onFlag}
-          loading={Boolean(loadingFlag & Modal.NO)}
+          loading={Boolean(loadingFlag & Flag.NO)}
           {...noProps}
         >
           {noLabel}
@@ -201,11 +203,11 @@ export default class ModalItemRenderer extends PureComponent<
     ].filter(Boolean);
 
     return (
-      <ModalProvider value={componentProps}>
+      <Provider value={modalComponentProps}>
         {ReactDOM.createPortal(
           <ModalImpl
             {...remainingProps}
-            disableCloseIcon={!(flags! & Modal.CLOSE)}
+            disableCloseIcon={!(flags! & Flag.CLOSE)}
             caption={title}
             visible={visible}
             onClose={this.onClose}
@@ -226,7 +228,8 @@ export default class ModalItemRenderer extends PureComponent<
           </ModalImpl>,
           this.container
         )}
-      </ModalProvider>
+      </Provider>
     );
   }
 }
+export { ModalContext, ModalConsumer, ModalProvider };

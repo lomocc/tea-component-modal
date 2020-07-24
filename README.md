@@ -2,7 +2,7 @@
 
 ## Usage
 
-```
+```js
 import Modal from 'tea-component-modal';
 
 let flag = await modalRef.current.show({

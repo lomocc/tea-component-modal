@@ -3,11 +3,24 @@ import React, {
   createRef,
   PureComponent,
   ReactElement,
-  ReactType,
+  ReactNode,
   RefObject,
 } from 'react';
+import { ModalProvider } from './context';
+import Flag from './Flag';
 import { ModalComponentProps, ModalProps } from './interfaces';
-import mergeRefs from './mergeRefs';
+
+function mergeRefs(refs: any[]) {
+  return (value: any) => {
+    refs.forEach((ref) => {
+      if (typeof ref === 'function') {
+        ref(value);
+      } else if (ref != null) {
+        ref.current = value;
+      }
+    });
+  };
+}
 
 interface Props extends ModalProps {
   itemRenderer?: ComponentType<ModalProps>;
@@ -28,58 +41,57 @@ interface State {
  *   );
  */
 export default class Modal extends PureComponent<Props, State> {
-  static defaultProps: Props;
   /**
    * 无任何选择
    */
-  static NONE = 0x0000;
+  static NONE: number;
   /**
    * 无任何选择，阻止窗口关闭
    */
-  static PREVENT_DEFAULT = 0x0000;
+  static PREVENT_DEFAULT: number;
   /**
    * 点击 '是'
    */
-  static YES = 0x0001;
+  static YES: number;
   /**
    * 选择 '否'
    */
-  static NO = 0x0002;
+  static NO: number;
   /**
    * 选择 '确定'
    */
-  static OK = 0x0004;
+  static OK: number;
   /**
    * 选择 '取消'
    */
-  static CANCEL = 0x0008;
+  static CANCEL: number;
   /**
    * 选择 '关闭'
    */
-  static CLOSE = 0x0010;
+  static CLOSE: number;
 
   state: State = {
     children: [],
   };
   /**
-   * 打开弹窗
+   * 打开弹窗通用方法
    * @param modalProps
-   * @param ref
+   * @param children
    */
-  show(
-    modalProps?: Partial<ModalProps>,
-    ref?: RefObject<ModalComponentProps>
-  ): Promise<number> {
+  show = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ): Promise<number> => {
     return new Promise<number>((resolve) => {
-      const { itemRenderer, onClose, ...remainingProps } = this.props;
+      const remainingProps = this.props;
       const innerRef: RefObject<Modal> = createRef();
-      const ModalItemRenderer: ReactType = itemRenderer!;
-      const modal: ReactElement = (
-        <ModalItemRenderer
+      const modal = (
+        <ModalProvider
           {...remainingProps}
           {...modalProps}
+          children={children}
           key={Date.now()}
-          ref={mergeRefs([ref, innerRef])}
+          ref={mergeRefs([modalProps?.ref, innerRef])}
           onCloseCallback={resolve}
           onExited={() => {
             this.setState(({ children }) => ({
@@ -92,74 +104,91 @@ export default class Modal extends PureComponent<Props, State> {
         children: [...children, modal],
       }));
     });
-  }
+  };
   /**
-   * API 的方式唤起一个确认对话框
-   * @returns 异步返回布尔值，为 `true` 则表示用户确认，为 `false` 则表示用户取消
+   * 确认弹窗
    */
-  confirm = (modalProps?: ModalProps, ref?: RefObject<ModalComponentProps>) =>
+  confirm = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ) =>
     this.show(
       {
-        flags: Modal.OK | Modal.CANCEL | Modal.CLOSE,
+        flags: Flag.OK | Flag.CANCEL | Flag.CLOSE,
         ...modalProps,
       },
-      ref
+      children
     );
   /**
    * 成功弹窗
    */
-  success = (modalProps?: ModalProps, ref?: RefObject<ModalComponentProps>) =>
+  success = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ) =>
     this.show(
       {
-        flags: Modal.OK,
+        flags: Flag.OK,
         icon: 'success',
         ...modalProps,
       },
-      ref
+      children
     );
   /**
    * 错误弹窗
    */
-  error = (modalProps?: ModalProps, ref?: RefObject<ModalComponentProps>) =>
+  error = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ) =>
     this.show(
       {
-        flags: Modal.OK,
+        flags: Flag.OK,
         icon: 'error',
         ...modalProps,
       },
-      ref
+      children
     );
   /**
    * 提醒信息
    */
-  alert = (modalProps?: ModalProps, ref?: RefObject<ModalComponentProps>) =>
+  alert = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ) =>
     this.show(
       {
-        flags: Modal.OK,
+        flags: Flag.OK,
         ...modalProps,
       },
-      ref
+      children
     );
   /**
    * 警告信息
    */
-  warning = (modalProps?: ModalProps, ref?: RefObject<ModalComponentProps>) =>
+  warning = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ) =>
     this.show(
       {
-        flags: Modal.OK,
+        flags: Flag.OK,
         icon: 'warning',
         ...modalProps,
       },
-      ref
+      children
     );
   /**
    * 警告信息
    */
-  warn = (modalProps?: ModalProps, ref?: RefObject<ModalComponentProps>) =>
-    this.warning(modalProps, ref);
+  warn = (
+    modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
+    children?: ReactNode
+  ) => this.warning(modalProps, children);
 
   render() {
     const { children } = this.state;
     return children;
   }
 }
+Object.assign(Modal, Flag);

@@ -16,23 +16,44 @@ function App() {
         <button
           onClick={async () => {
             console.log(testRef);
-
+            await modalRef.current.show({
+              description: 'description',
+            });
             let flag0 = await modalRef.current.show(
               {
+                ref: testRef,
                 title: 'modalManagerRef0',
                 message: 'Message',
                 description: 'desc',
               },
-              testRef
+              <button
+                onClick={() => {
+                  testRef.current.close(Modal.CLOSE);
+                }}
+              >
+                close
+              </button>
             );
             if (flag0 & Modal.OK) {
-              let successFlag = await modalRef.current.success({});
+              let successFlag = await modalRef.current.warning({
+                ref: testRef,
+                size: 's',
+                message: '创建成功',
+                description: '感谢参与',
+              });
               console.log('successFlag', successFlag);
             } else if (flag0 & Modal.YES) {
               let confirmFlag = await modalRef.current.confirm({});
               console.log('confirmFlag', confirmFlag);
             } else if (flag0 & Modal.CANCEL) {
               let warnFlag = await modalRef.current.warn({
+                title: 'title',
+                message: 'message',
+                description: 'description',
+              });
+              console.log('warnFlag', warnFlag);
+            } else if (flag0 & Modal.NO) {
+              let warnFlag = await modalRef.current.error({
                 title: 'title',
                 message: 'message',
                 description: 'description',
@@ -70,17 +91,11 @@ function App() {
         >
           show1
         </button>
-        <button
-          onClick={() => {
-            testRef.current.close(Modal.CLOSE);
-          }}
-        >
-          close
-        </button>
       </header>
 
       <Modal
         ref={modalRef}
+        size="s"
         flags={Modal.CANCEL | Modal.OK | Modal.YES | Modal.NO}
       />
     </div>
