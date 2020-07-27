@@ -1,6 +1,6 @@
 {
   "name": "tea-component-modal",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/tea-component-modal.es.js",
   "types": "dist/index.d.ts",
   "directories": {
