@@ -16,8 +16,10 @@ function App() {
         <button
           onClick={async () => {
             console.log(testRef);
-            await modalRef.current.show({
-              description: 'description',
+            await modalRef.current.warn({
+              title: 'title',
+              message: 'message',
+              flags: Modal.CLOSE | Modal.OK,
             });
             let flag0 = await modalRef.current.show(
               {
@@ -35,11 +37,9 @@ function App() {
               </button>
             );
             if (flag0 & Modal.OK) {
-              let successFlag = await modalRef.current.warning({
+              let successFlag = await modalRef.current.show({
                 ref: testRef,
                 size: 's',
-                message: '创建成功',
-                description: '感谢参与',
               });
               console.log('successFlag', successFlag);
             } else if (flag0 & Modal.YES) {
@@ -97,7 +97,7 @@ function App() {
         ref={modalRef}
         size="s"
         flags={Modal.CANCEL | Modal.OK | Modal.YES | Modal.NO}
-      />
+      ></Modal>
     </div>
   );
 }

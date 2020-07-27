@@ -213,18 +213,19 @@ class ModalProvider extends PureComponent<Props, State> {
             onClose={this.onClose}
             onExited={this.onExited}
           >
-            {children ? (
-              <ModalImpl.Body>{children}</ModalImpl.Body>
-            ) : (
-              (icon || message || description) && (
-                <ModalImpl.Message
-                  icon={icon}
-                  message={message}
-                  description={description}
-                />
-              )
+            {(children || icon || message || description) && (
+              <ModalImpl.Body>
+                {(icon || message || description) && (
+                  <ModalImpl.Message
+                    icon={icon}
+                    message={message}
+                    description={description}
+                  />
+                )}
+                {children}
+              </ModalImpl.Body>
             )}
-            <ModalImpl.Footer>{buttons}</ModalImpl.Footer>
+            {buttons && <ModalImpl.Footer>{buttons}</ModalImpl.Footer>}
           </ModalImpl>,
           this.container
         )}

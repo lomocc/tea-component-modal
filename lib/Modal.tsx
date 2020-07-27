@@ -89,7 +89,6 @@ export default class Modal extends PureComponent<Props, State> {
         <ModalProvider
           {...remainingProps}
           {...modalProps}
-          children={children}
           key={Date.now()}
           ref={mergeRefs([modalProps?.ref, innerRef])}
           onCloseCallback={resolve}
@@ -98,7 +97,9 @@ export default class Modal extends PureComponent<Props, State> {
               children: children.filter((child) => child !== modal),
             }));
           }}
-        />
+        >
+          {children ?? modalProps?.children ?? remainingProps?.children}
+        </ModalProvider>
       );
       this.setState(({ children }) => ({
         children: [...children, modal],
