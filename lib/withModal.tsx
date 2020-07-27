@@ -3,7 +3,7 @@ import React, { ComponentClass } from 'react';
 import { ModalConsumer } from './context';
 
 /**
- * 为自组件注入 closeModal 方法
+ * 为自组件注入 close 方法
  */
 export default function withModal<P>(WrappedComponent: ComponentClass<P>) {
   const Enhance = React.forwardRef((props: P, ref) => {
