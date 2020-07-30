@@ -74,7 +74,7 @@ export default class Modal extends PureComponent<Props, State> {
     children: [],
   };
   /**
-   * 打开弹窗通用方法
+   * 打开弹窗通用方法  flags = Modal.OK
    * @param modalProps
    * @param children
    */
@@ -107,7 +107,7 @@ export default class Modal extends PureComponent<Props, State> {
     });
   };
   /**
-   * 确认弹窗
+   * 确认弹窗 flags = Modal.OK | Modal.CANCEL | Modal.CLOSE
    */
   confirm = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
@@ -121,7 +121,7 @@ export default class Modal extends PureComponent<Props, State> {
       children
     );
   /**
-   * 成功弹窗
+   * 成功弹窗 flags = Modal.OK
    */
   success = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
@@ -136,7 +136,7 @@ export default class Modal extends PureComponent<Props, State> {
       children
     );
   /**
-   * 错误弹窗
+   * 错误弹窗 flags = Modal.OK
    */
   error = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
@@ -151,7 +151,7 @@ export default class Modal extends PureComponent<Props, State> {
       children
     );
   /**
-   * 提醒信息
+   * 提醒信息 flags = Modal.OK
    */
   alert = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
@@ -165,7 +165,7 @@ export default class Modal extends PureComponent<Props, State> {
       children
     );
   /**
-   * 警告信息
+   * 警告信息 flags = Modal.OK
    */
   warning = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
@@ -180,7 +180,7 @@ export default class Modal extends PureComponent<Props, State> {
       children
     );
   /**
-   * 警告信息
+   * 警告信息 flags = Modal.OK
    */
   warn = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
