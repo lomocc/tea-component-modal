@@ -225,7 +225,9 @@ class ModalProvider extends PureComponent<Props, State> {
                 {children}
               </ModalImpl.Body>
             )}
-            {buttons && <ModalImpl.Footer>{buttons}</ModalImpl.Footer>}
+            {buttons.length > 0 && (
+              <ModalImpl.Footer>{buttons}</ModalImpl.Footer>
+            )}
           </ModalImpl>,
           this.container
         )}
