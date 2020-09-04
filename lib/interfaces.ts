@@ -36,9 +36,7 @@ export interface ModalProps
   /**
    * 点选确认/取消/是/否按钮时触发，可以返回新的 flag
    */
-  onClose?: (
-    flag: number
-  ) => number | PromiseLike<number> | void | PromiseLike<void>;
+  onClose?: (flag: number) => number | void | PromiseLike<number | void>;
   /**
    * 完全关闭时调用的回调
    */
