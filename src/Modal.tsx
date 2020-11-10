@@ -4,7 +4,6 @@ import {
   ModalProps as ModalImplProps,
 } from '@tencent/tea-component';
 import React, {
-  ComponentType,
   PureComponent,
   ReactElement,
   ReactNode,
@@ -60,9 +59,7 @@ export interface ModalProps
   onExited?: (flag: Flag) => void;
 }
 
-interface Props extends ModalProps {
-  itemRenderer?: ComponentType<ModalProps>;
-}
+interface Props extends ModalProps {}
 interface State {
   children: ReactElement[];
 }
