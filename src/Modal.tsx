@@ -1,3 +1,8 @@
+import {
+  ButtonProps,
+  ModalMessageProps,
+  ModalProps as ModalImplProps,
+} from '@tencent/tea-component';
 import React, {
   ComponentType,
   PureComponent,
@@ -5,10 +10,55 @@ import React, {
   ReactNode,
   RefObject,
 } from 'react';
-import { ModalComponentProps } from '../types/ModalComponentProps';
-import { ModalProps } from '../types/ModalProps';
 import { ModalProvider } from './context';
 import { Flag } from './Flag';
+
+export interface ModalComponentProps {
+  /**
+   * 关闭弹窗
+   * @param flag
+   */
+  close?(flag?: Flag): Promise<void>;
+}
+
+export interface ModalProps
+  extends Omit<
+    ModalImplProps,
+    | 'caption'
+    | 'visible'
+    | 'onClose'
+    | 'onExited'
+    | 'destroyOnClose'
+    | 'disableCloseIcon'
+  > {
+  root?: Node;
+  /** Modal title */
+  title?: ModalImplProps['caption'];
+  /** ModalMessage icon */
+  icon?: ModalMessageProps['icon'];
+  /** ModalMessage message */
+  message?: ModalMessageProps['message'];
+  /** ModalMessage description */
+  description?: ModalMessageProps['description'];
+  /** 需要展示哪些按钮 */
+  flags?: Flag;
+  yesLabel?: string;
+  noLabel?: string;
+  okLabel?: string;
+  cancelLabel?: string;
+  yesProps?: Omit<ButtonProps, 'onClick'>;
+  noProps?: Omit<ButtonProps, 'onClick'>;
+  okProps?: Omit<ButtonProps, 'onClick'>;
+  cancelProps?: Omit<ButtonProps, 'onClick'>;
+  /**
+   * 点选确认/取消/是/否按钮时触发，可以返回新的 flag
+   */
+  onClose?: (flag: Flag) => Flag | void | PromiseLike<Flag | void>;
+  /**
+   * 完全关闭时调用的回调
+   */
+  onExited?: (flag: Flag) => void;
+}
 
 interface Props extends ModalProps {
   itemRenderer?: ComponentType<ModalProps>;
@@ -32,31 +82,31 @@ export class Modal extends PureComponent<Props, State> {
   /**
    * 无任何选择
    */
-  static NONE: number;
+  static NONE = Flag.NONE;
   /**
    * 无任何选择，阻止窗口关闭
    */
-  static PREVENT_DEFAULT: number;
+  static PREVENT_DEFAULT = Flag.PREVENT_DEFAULT;
   /**
    * 点击 '是'
    */
-  static YES: number;
+  static YES = Flag.YES;
   /**
    * 选择 '否'
    */
-  static NO: number;
+  static NO = Flag.NO;
   /**
    * 选择 '确定'
    */
-  static OK: number;
+  static OK = Flag.OK;
   /**
    * 选择 '取消'
    */
-  static CANCEL: number;
+  static CANCEL = Flag.CANCEL;
   /**
    * 选择 '关闭'
    */
-  static CLOSE: number;
+  static CLOSE = Flag.CLOSE;
 
   state: State = {
     children: [],
@@ -69,8 +119,8 @@ export class Modal extends PureComponent<Props, State> {
   show = (
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
     children?: ReactNode
-  ): Promise<number> => {
-    return new Promise<number>(resolve => {
+  ): Promise<Flag> => {
+    return new Promise<Flag>(resolve => {
       const remainingProps = this.props;
       const modal = (
         <ModalProvider
@@ -179,4 +229,3 @@ export class Modal extends PureComponent<Props, State> {
     return children;
   }
 }
-Object.assign(Modal, Flag);

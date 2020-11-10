@@ -5,10 +5,8 @@ import {
 } from '@tencent/tea-component';
 import React, { Component, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import { ModalComponentProps } from '../types/ModalComponentProps';
-import { ModalProps } from '../types/ModalProps';
 import { Flag } from './Flag';
-// import { ModalComponentProps, ModalProps } from '../types';
+import { ModalComponentProps, ModalProps } from './Modal';
 
 const ModalContext = React.createContext<Pick<
   ModalComponentProps,
@@ -17,8 +15,8 @@ const ModalContext = React.createContext<Pick<
 const { Consumer: ModalConsumer, Provider } = ModalContext;
 
 interface ItemButtonProps extends Omit<ButtonProps, 'onClick'> {
-  onClick: (flag: number) => void;
-  flag: number;
+  onClick: (flag: Flag) => void;
+  flag: Flag;
 }
 class ItemButton extends Component<ItemButtonProps> {
   private onClick = () => {
@@ -35,14 +33,14 @@ export interface Props extends ModalProps {
   /**
    * 关闭弹窗的回调
    */
-  onCloseCallback?: ((flag: number) => void) | null;
+  onCloseCallback?: ((flag: Flag) => void) | null;
 }
 
 interface State {
   /**
    * 当前点击选中的按钮 flag
    */
-  flag: number | null;
+  flag: Flag | null;
   /**
    * 是否显示弹窗
    */
@@ -50,7 +48,7 @@ interface State {
   /**
    * 正在点击加载的按钮 flag
    */
-  loadingFlag: number;
+  loadingFlag: Flag;
   readonly modalComponentProps: ModalComponentProps;
 }
 
@@ -82,7 +80,7 @@ class ModalProvider extends PureComponent<Props, State> {
    * 点击某个 flag 时触发关闭弹窗
    * @param flag
    */
-  private onFlag = async (flag: number) => {
+  private onFlag = async (flag: Flag) => {
     let { onClose, onCloseCallback } = this.props;
 
     this.setState({ loadingFlag: flag });
@@ -118,7 +116,7 @@ class ModalProvider extends PureComponent<Props, State> {
   /**
    * 关闭弹窗
    */
-  close = async (flag: number = Flag.CANCEL) => {
+  close = async (flag: Flag = Flag.CANCEL) => {
     await this.onFlag(flag);
   };
   componentDidMount() {
