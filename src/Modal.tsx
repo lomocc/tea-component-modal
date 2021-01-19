@@ -150,6 +150,7 @@ export class Modal extends PureComponent<Props, State> {
     this.show(
       {
         flags: Flag.OK | Flag.CANCEL | Flag.CLOSE,
+        icon: 'infoblue',
         ...modalProps,
       },
       children
