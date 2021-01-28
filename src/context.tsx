@@ -20,11 +20,11 @@ interface ItemButtonProps extends Omit<ButtonProps, 'onClick'> {
 }
 class ItemButton extends Component<ItemButtonProps> {
   private onClick = () => {
-    let { onClick, flag } = this.props;
+    const { onClick, flag } = this.props;
     onClick?.(flag);
   };
   render() {
-    let { flag, onClick, ...props } = this.props;
+    const { flag, onClick, ...props } = this.props;
     return <Button {...props} onClick={this.onClick} />;
   }
 }
@@ -81,7 +81,7 @@ class ModalProvider extends PureComponent<Props, State> {
    * @param flag
    */
   private onFlag = async (flag: Flag) => {
-    let { onClose, onCloseCallback } = this.props;
+    const { onClose, onCloseCallback } = this.props;
 
     this.setState({ loadingFlag: flag });
     if (typeof onClose === 'function') {
@@ -91,16 +91,49 @@ class ModalProvider extends PureComponent<Props, State> {
         flag = pFlag;
       }
     }
-    if (flag & 0xffffff) {
-      await onCloseCallback?.(flag);
-      this.setState({
-        visible: false,
-        flag,
-        loadingFlag: Flag.NONE,
-      });
+    if (flag & Flag.REJECT) {
+      this.setState({ loadingFlag: Flag.NONE });
+      await this.animationAfterReject();
     } else {
+      if (flag & 0xffffff) {
+        await onCloseCallback?.(flag);
+        this.setState({
+          visible: false,
+          flag,
+        });
+      }
       this.setState({ loadingFlag: Flag.NONE });
     }
+  };
+  /**
+   * 拒绝后播放 shakeX 动画
+   */
+  private animationAfterReject = async () => {
+    const container = ReactDOM.findDOMNode(this) as Element;
+    const dialog = container?.querySelector('.tea-dialog__inner');
+    const animation = dialog?.animate(
+      {
+        transform: [
+          'translateX(0)',
+          'translateX(-10px)',
+          'translateX(10px)',
+          'translateX(-10px)',
+          'translateX(10px)',
+          'translateX(-10px)',
+          'translateX(10px)',
+          'translateX(-10px)',
+          'translateX(10px)',
+          'translateX(-10px)',
+          'translateX(0)',
+        ],
+        offset: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      },
+      {
+        duration: 1000,
+        iterations: 1,
+      }
+    );
+    await animation?.finished;
   };
   private onClose = async () => {
     await this.onFlag(Flag.CLOSE);
@@ -109,8 +142,8 @@ class ModalProvider extends PureComponent<Props, State> {
    * 弹窗关闭（动画完成）
    */
   private onExited = async () => {
-    let { flag } = this.state;
-    let { onExited } = this.props;
+    const { flag } = this.state;
+    const { onExited } = this.props;
     await onExited?.(flag!);
   };
   /**
@@ -122,7 +155,6 @@ class ModalProvider extends PureComponent<Props, State> {
   componentDidMount() {
     const { root } = this.props;
     root!.appendChild(this.container);
-
     this.setState({ visible: true });
   }
   componentWillUnmount() {

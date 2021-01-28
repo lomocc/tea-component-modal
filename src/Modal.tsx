@@ -104,6 +104,10 @@ export class Modal extends PureComponent<Props, State> {
    * 选择 '关闭'
    */
   static CLOSE = Flag.CLOSE;
+  /**
+   * 拒绝，会附带播放 shakeX 动画
+   */
+  static REJECT = Flag.REJECT;
 
   state: State = {
     children: [],
@@ -151,6 +155,7 @@ export class Modal extends PureComponent<Props, State> {
       {
         flags: Flag.OK | Flag.CANCEL | Flag.CLOSE,
         icon: 'infoblue',
+        size: 's',
         ...modalProps,
       },
       children
@@ -166,6 +171,7 @@ export class Modal extends PureComponent<Props, State> {
       {
         flags: Flag.OK,
         icon: 'success',
+        size: 's',
         ...modalProps,
       },
       children
@@ -181,6 +187,7 @@ export class Modal extends PureComponent<Props, State> {
       {
         flags: Flag.OK,
         icon: 'error',
+        size: 's',
         ...modalProps,
       },
       children
@@ -195,6 +202,7 @@ export class Modal extends PureComponent<Props, State> {
     this.show(
       {
         flags: Flag.OK,
+        size: 's',
         ...modalProps,
       },
       children
@@ -210,6 +218,7 @@ export class Modal extends PureComponent<Props, State> {
       {
         flags: Flag.OK,
         icon: 'warning',
+        size: 's',
         ...modalProps,
       },
       children

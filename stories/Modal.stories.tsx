@@ -12,15 +12,16 @@ const show = () => {
       {
         ref: innerRef,
         title: '标题',
-        flags: Modal.OK | Modal.CANCEL | Modal.CLOSE, // 需要显示的按钮们
+        flags: Modal.OK | Modal.CANCEL | Modal.YES | Modal.CLOSE, // 需要显示的按钮们
+        yesLabel: '拒绝',
         onClose: async flag => {
           // 判断用户点击了哪个按钮
           if (flag & Modal.OK) {
             console.log('你点击了‘确定’');
           }
           if (flag & Modal.YES) {
-            console.log('你点击了‘是’');
-            return Modal.PREVENT_DEFAULT; // 阻止窗口关闭
+            console.log('你点击了‘拒绝’');
+            return Modal.REJECT; // 阻止窗口关闭
           }
         },
       },

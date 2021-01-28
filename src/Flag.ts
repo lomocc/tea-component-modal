@@ -27,4 +27,8 @@ export const enum Flag {
    * 选择 '关闭'
    */
   CLOSE = 0x0010,
+  /**
+   * 拒绝，会附带播放 shakeX 动画
+   */
+  REJECT = 0x0020,
 }
