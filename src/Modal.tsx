@@ -52,7 +52,10 @@ export interface ModalProps
   /**
    * 点选确认/取消/是/否按钮时触发，可以返回新的 flag
    */
-  onClose?: (flag: Flag) => Flag | void | PromiseLike<Flag | void>;
+  onClose?: (
+    flag: Flag,
+    ref?: RefObject<unknown>
+  ) => Flag | void | PromiseLike<Flag | void>;
   /**
    * 完全关闭时调用的回调
    */

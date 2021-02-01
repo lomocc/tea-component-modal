@@ -3,7 +3,12 @@ import {
   ButtonProps,
   Modal as ModalImpl,
 } from '@tencent/tea-component';
-import React, { Component, PureComponent } from 'react';
+import React, {
+  Component,
+  isValidElement,
+  PureComponent,
+  ReactNode,
+} from 'react';
 import ReactDOM from 'react-dom';
 import { Flag } from './Flag';
 import { ModalComponentProps, ModalProps } from './Modal';
@@ -49,6 +54,7 @@ interface State {
    * 正在点击加载的按钮 flag
    */
   loadingFlag: Flag;
+  onlyChildren: ReactNode;
   readonly modalComponentProps: ModalComponentProps;
 }
 
@@ -74,7 +80,25 @@ class ModalProvider extends PureComponent<Props, State> {
       modalComponentProps: {
         close: this.close,
       },
+      onlyChildren: null,
     };
+  }
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { children } = nextProps;
+    // @ts-ignore
+    if (isValidElement(children) && children.ref == null) {
+      // 如果 children 没有传 ref 就生成一个
+      return {
+        onlyChildren: React.cloneElement(React.Children.only(children), {
+          // @ts-ignore
+          ref: prevState.onlyChildren?.ref || React.createRef(),
+        }),
+      };
+    } else {
+      return {
+        onlyChildren: children,
+      };
+    }
   }
   /**
    * 点击某个 flag 时触发关闭弹窗
@@ -82,10 +106,11 @@ class ModalProvider extends PureComponent<Props, State> {
    */
   private onFlag = async (flag: Flag) => {
     const { onClose, onCloseCallback } = this.props;
-
     this.setState({ loadingFlag: flag });
     if (typeof onClose === 'function') {
-      const pFlag = await onClose(flag);
+      const { onlyChildren } = this.state;
+      // @ts-ignore
+      const pFlag = await onClose(flag, onlyChildren?.ref);
       // 如果返回了新的 pFlag 那就使用新的
       if (typeof pFlag === 'number') {
         flag = pFlag;
@@ -111,7 +136,7 @@ class ModalProvider extends PureComponent<Props, State> {
   private animationAfterReject = async () => {
     const container = ReactDOM.findDOMNode(this) as Element;
     const dialog = container?.querySelector('.tea-dialog__inner');
-    const animation = dialog?.animate(
+    const animation = dialog?.animate?.(
       {
         transform: [
           'translateX(0)',
@@ -162,7 +187,12 @@ class ModalProvider extends PureComponent<Props, State> {
     root!.removeChild(this.container);
   }
   render() {
-    const { visible, loadingFlag, modalComponentProps } = this.state;
+    const {
+      visible,
+      loadingFlag,
+      modalComponentProps,
+      onlyChildren,
+    } = this.state;
 
     const {
       root,
@@ -245,7 +275,7 @@ class ModalProvider extends PureComponent<Props, State> {
             onClose={this.onClose}
             onExited={this.onExited}
           >
-            {(children || icon || message || description) && (
+            {(onlyChildren || icon || message || description) && (
               <ModalImpl.Body>
                 {(icon || message || description) && (
                   <ModalImpl.Message
@@ -254,7 +284,7 @@ class ModalProvider extends PureComponent<Props, State> {
                     description={description}
                   />
                 )}
-                {children}
+                {onlyChildren}
               </ModalImpl.Body>
             )}
             {buttons.length > 0 && (
