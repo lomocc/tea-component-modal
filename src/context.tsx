@@ -63,14 +63,12 @@ interface State {
  */
 class ModalProvider extends PureComponent<Props, State> {
   static defaultProps = {
-    root: document.body,
     flags: Flag.OK,
     yesLabel: '是',
     noLabel: '否',
     okLabel: '确定',
     cancelLabel: '取消',
   };
-  private container: HTMLElement = document.createElement('div');
   constructor(props: ModalProps) {
     super(props);
     this.state = {
@@ -178,13 +176,7 @@ class ModalProvider extends PureComponent<Props, State> {
     await this.onFlag(flag);
   };
   componentDidMount() {
-    const { root } = this.props;
-    root!.appendChild(this.container);
     this.setState({ visible: true });
-  }
-  componentWillUnmount() {
-    const { root } = this.props;
-    root!.removeChild(this.container);
   }
   render() {
     const {
@@ -195,7 +187,6 @@ class ModalProvider extends PureComponent<Props, State> {
     } = this.state;
 
     const {
-      root,
       title,
       icon,
       message,
@@ -266,33 +257,28 @@ class ModalProvider extends PureComponent<Props, State> {
 
     return (
       <Provider value={modalComponentProps}>
-        {ReactDOM.createPortal(
-          <ModalImpl
-            {...remainingProps}
-            disableCloseIcon={!(flags! & Flag.CLOSE)}
-            caption={title}
-            visible={visible}
-            onClose={this.onClose}
-            onExited={this.onExited}
-          >
-            {(onlyChildren || icon || message || description) && (
-              <ModalImpl.Body>
-                {(icon || message || description) && (
-                  <ModalImpl.Message
-                    icon={icon}
-                    message={message}
-                    description={description}
-                  />
-                )}
-                {onlyChildren}
-              </ModalImpl.Body>
-            )}
-            {buttons.length > 0 && (
-              <ModalImpl.Footer>{buttons}</ModalImpl.Footer>
-            )}
-          </ModalImpl>,
-          this.container
-        )}
+        <ModalImpl
+          {...remainingProps}
+          disableCloseIcon={!(flags! & Flag.CLOSE)}
+          caption={title}
+          visible={visible}
+          onClose={this.onClose}
+          onExited={this.onExited}
+        >
+          {(onlyChildren || icon || message || description) && (
+            <ModalImpl.Body>
+              {(icon || message || description) && (
+                <ModalImpl.Message
+                  icon={icon}
+                  message={message}
+                  description={description}
+                />
+              )}
+              {onlyChildren}
+            </ModalImpl.Body>
+          )}
+          {buttons.length > 0 && <ModalImpl.Footer>{buttons}</ModalImpl.Footer>}
+        </ModalImpl>
       </Provider>
     );
   }

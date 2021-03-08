@@ -30,7 +30,6 @@ export interface ModalProps
     | 'destroyOnClose'
     | 'disableCloseIcon'
   > {
-  root?: Node;
   /** Modal title */
   title?: ModalImplProps['caption'];
   /** ModalMessage icon */
@@ -124,7 +123,7 @@ export class Modal extends PureComponent<Props, State> {
     modalProps?: ModalProps & { ref?: RefObject<ModalComponentProps> },
     children?: ReactNode
   ): Promise<Flag> => {
-    return new Promise<Flag>(resolve => {
+    return new Promise<Flag>((resolve) => {
       const remainingProps = this.props;
       const modal = (
         <ModalProvider
@@ -135,7 +134,7 @@ export class Modal extends PureComponent<Props, State> {
           onCloseCallback={resolve}
           onExited={() => {
             this.setState(({ children }) => ({
-              children: children.filter(child => child !== modal),
+              children: children.filter((child) => child !== modal),
             }));
           }}
         >

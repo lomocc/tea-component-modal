@@ -12,9 +12,9 @@ const show = () => {
       {
         ref: innerRef,
         title: '标题',
-        flags: Modal.OK | Modal.CANCEL | Modal.YES | Modal.CLOSE, // 需要显示的按钮们
+        flags: Modal.OK | Modal.CANCEL | Modal.YES | Modal.NO | Modal.CLOSE, // 需要显示的按钮们
         yesLabel: '拒绝',
-        onClose: async flag => {
+        onClose: async (flag) => {
           // 判断用户点击了哪个按钮
           if (flag & Modal.OK) {
             console.log('你点击了‘确定’');
@@ -56,7 +56,7 @@ const show = () => {
           <Collapse iconPosition="right" style={{ marginTop: 8 }}>
             <Collapse.Panel
               id="1"
-              title={active => (active ? '收起' : '展开')}
+              title={(active) => (active ? '收起' : '展开')}
               position="top"
             >
               <List type="bullet" style={{ marginTop: 8 }}>
