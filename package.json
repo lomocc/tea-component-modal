@@ -22,7 +22,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "predeploy": "build-storybook",
-    "deploy": "build-storybook && gh-pages -d public"
+    "deploy": "gh-pages -d storybook-static"
   },
   "peerDependencies": {
     "react": ">=16"
