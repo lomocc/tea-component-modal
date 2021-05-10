@@ -53,7 +53,7 @@ export interface ModalProps
    */
   onClose?: (
     flag: Flag,
-    ref?: RefObject<unknown>
+    ref?: RefObject<any>
   ) => Flag | void | PromiseLike<Flag | void>;
   /**
    * 完全关闭时调用的回调
