@@ -1,15 +1,15 @@
-import {
-  Button,
-  ButtonProps,
-  Modal as ModalImpl,
-} from '@tencent/tea-component';
 import React, {
   Component,
   isValidElement,
   PureComponent,
-  ReactNode,
+  ReactNode
 } from 'react';
 import ReactDOM from 'react-dom';
+import {
+  Button,
+  ButtonProps,
+  Modal as ModalImpl
+} from 'tea-component';
 import { Flag } from './Flag';
 import { ModalComponentProps, ModalProps } from './Modal';
 

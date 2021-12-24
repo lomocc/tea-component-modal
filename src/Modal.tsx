@@ -1,14 +1,14 @@
-import {
-  ButtonProps,
-  ModalMessageProps,
-  ModalProps as ModalImplProps,
-} from '@tencent/tea-component';
 import React, {
   PureComponent,
   ReactElement,
   ReactNode,
   RefObject,
 } from 'react';
+import {
+  ButtonProps,
+  ModalMessageProps,
+  ModalProps as ModalImplProps,
+} from 'tea-component';
 import { ModalProvider } from './context';
 import { Flag } from './Flag';
 

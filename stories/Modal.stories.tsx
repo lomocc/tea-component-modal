@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react';
-import { Alert, Button, Collapse, List } from '@tencent/tea-component';
-import '@tencent/tea-component/lib/tea.css';
 import React, { useRef } from 'react';
+import { Alert, Button, Collapse, List } from 'tea-component';
+import 'tea-component/lib/tea.css';
 import { Modal, ModalComponentProps } from '../dist';
 
 const show = () => {
